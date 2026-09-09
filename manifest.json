@@ -1,0 +1,18 @@
+{
+  "name": "Mejor Cotiza Casa",
+  "short_name": "Cotiza Casa",
+  "description": "Guarda, cotiza y compara casas: tu asistente personal de vivienda.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F5FB",
+  "theme_color": "#2F5FFF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%232F5FFF'/%3E%3Ctext x='96' y='128' font-size='100' text-anchor='middle' fill='white' font-family='Arial'%3E%F0%9F%8F%A1%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
