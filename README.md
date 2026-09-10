@@ -8,20 +8,28 @@ No necesita instalación, ni Node, ni `npm run build`. Es HTML/JS puro que corre
 
 - `index.html` — página principal (carga las librerías y `app.jsx`)
 - `app.jsx` — toda la app (pantallas, calculadoras, mapa, PDF, menú)
-- `manifest.json` — hace que la app se pueda "instalar" desde el navegador
-- `sw.js` — permite que la app abra aunque no haya internet (una vez visitada)
+- `manifest.json` — hace que la app se pueda instalar de verdad en el celular
+- `sw.js` — permite que la app abra aunque no haya internet, y se actualiza sola
+- `icons/` — carpeta con el ícono de la app en varios tamaños (no es un emoji)
 
 ## Cómo publicarlo en GitHub Pages (sin usar la terminal)
 
 1. Ve a [github.com](https://github.com) e inicia sesión (o crea una cuenta gratis).
 2. Clic en **New repository**. Nombre sugerido: `mejor-cotiza-casa`. Public. Sin README (ya tienes uno). **Create repository**.
 3. Dentro del repositorio, **Add file → Upload files**.
-4. Arrastra los 5 archivos: `index.html`, `app.jsx`, `manifest.json`, `sw.js`, `README.md`. **Commit changes**.
+4. Arrastra `index.html`, `app.jsx`, `manifest.json`, `sw.js`, `README.md` **y la carpeta `icons` completa** (arrástrala tal cual, GitHub conserva la carpeta). **Commit changes**.
 5. Ve a **Settings → Pages**.
 6. En **Source**, elige **Deploy from a branch** → rama `main`, carpeta `/ (root)` → **Save**.
 7. Espera 1–2 minutos y recarga: verás `https://tu-usuario.github.io/mejor-cotiza-casa/`.
 
-Para actualizar la app más adelante: sube los archivos nuevos (paso 3–4) y GitHub Pages se actualiza solo en 1–2 minutos.
+Para actualizar la app más adelante: sube los archivos nuevos (paso 3–4) y GitHub Pages se actualiza en 1–2 minutos. **La app instalada en tu celular ahora se actualiza sola** la siguiente vez que la abras con internet (antes se quedaba pegada en una versión vieja por la caché; ya quedó corregido).
+
+## Instalar la app en tu celular (de verdad, no como acceso directo)
+
+- **Android (Chrome)**: abre el enlace de GitHub Pages, toca el menú (⋮) y elige **"Instalar app"** (no "Agregar acceso directo"). Debe aparecer con el ícono azul de la casa, y abrir en pantalla completa sin la barra del navegador.
+- **iPhone (Safari)**: abre el enlace, toca el botón de compartir (□↑) y elige **"Agregar a inicio"**. También abrirá con el ícono propio, en pantalla completa.
+
+Si antes la instalabas y salía como una "extensión" o con un ícono genérico, era porque el ícono estaba embebido como texto (emoji) y no como imagen real — ya se corrigió: ahora la app trae íconos PNG de verdad en varios tamaños.
 
 ## Qué funciona en esta versión
 

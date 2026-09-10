@@ -134,7 +134,8 @@ const DEFAULT_CENTER = { lat: 20.5888, lng: -100.3899 }; // Querétaro
 /*  UTILIDADES                                                          */
 /* ================================================================== */
 function fmtMoney(n) {
-  return Math.round(Number(n) || 0).toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 });
+  const num = Math.round(Number(n) || 0).toLocaleString("es-MX");
+  return `$${num} MXN`;
 }
 function Money({ n }) { return <>{fmtMoney(n)}</>; }
 function fileToDataUrl(file) {
@@ -378,10 +379,11 @@ function PropertyCard({ p, t, wide, onOpen, onFav }) {
         <div className="mcc-sans text-[16px] font-semibold mt-2" style={{ color: t.accent }}>
           <Money n={p.price} />{p.op === "Renta" ? <span className="text-[12px] font-normal" style={{ color: t.muted }}> /mes</span> : null}
         </div>
-        <div className="flex items-center gap-3 mt-2 mcc-sans text-[12px]" style={{ color: t.muted }}>
-          <span className="flex items-center gap-1"><IconBed size={13} />{p.beds || 0}</span>
-          <span className="flex items-center gap-1"><IconBath size={13} />{p.baths || 0}</span>
-          <span className="flex items-center gap-1"><IconCar size={13} />{p.parking || 0}</span>
+        <div className="flex items-center gap-3 mt-2.5 pt-2.5 mcc-sans text-[11.5px]" style={{ color: t.muted, borderTop: `1px solid ${t.border}` }}>
+          <span className="flex items-center gap-1"><IconBed size={13} />{p.beds || 0} rec</span>
+          <span style={{ width: 1, height: 12, background: t.border }} />
+          <span className="flex items-center gap-1"><IconBath size={13} />{p.baths || 0} baños</span>
+          <span style={{ width: 1, height: 12, background: t.border }} />
           <span className="flex items-center gap-1"><IconRuler size={13} />{p.m2Construccion || p.m2Terreno || 0}m²</span>
         </div>
       </div>
@@ -389,9 +391,33 @@ function PropertyCard({ p, t, wide, onOpen, onFav }) {
   );
 }
 
-/* ================================================================== */
-/*  MENÚ LATERAL Y BARRA SUPERIOR                                       */
-/* ================================================================== */
+const IconShare = (p) => <I {...p}><circle cx="18" cy="5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="19" r="2.5" /><line x1="8.3" y1="10.7" x2="15.7" y2="6.3" /><line x1="8.3" y1="13.3" x2="15.7" y2="17.7" /></I>;
+function ExpandableText({ text, t, limit = 130 }) {
+  const [open, setOpen] = useState(false);
+  if (!text) return null;
+  const isLong = text.length > limit;
+  const shown = open || !isLong ? text : text.slice(0, limit).trimEnd() + "…";
+  return (
+    <p className="mcc-sans text-[13.5px] leading-relaxed" style={{ color: t.muted }}>
+      {shown}{" "}
+      {isLong && (
+        <button onClick={() => setOpen((o) => !o)} className="mcc-sans font-semibold" style={{ color: t.accent }}>
+          {open ? "Leer menos" : "Leer más"}
+        </button>
+      )}
+    </p>
+  );
+}
+function UpdatedBanner({ t, iso }) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  const label = d.toLocaleDateString("es-MX", { day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" });
+  return (
+    <div className="flex items-center gap-2 mt-4 px-3 py-2.5 rounded-xl mcc-sans text-[12px]" style={{ background: t.bgSoft, color: t.muted }}>
+      <IconAlert size={13} color={t.muted} /> Información actualizada el {label}
+    </div>
+  );
+}
 const NAV_ITEMS = [
   { id: "home", label: "Inicio", icon: IconHome },
   { id: "casas", label: "Mis casas", icon: IconBuilding },
@@ -401,7 +427,7 @@ const NAV_ITEMS = [
 ];
 function SideDrawer({ open, onClose, t, name, dark, setDark, tab, setTab }) {
   return (
-    <div className={`fixed inset-0 z-40 transition-opacity ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}>
+    <div className={`absolute inset-0 z-40 transition-opacity ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}>
       <div onClick={onClose} className="absolute inset-0" style={{ background: "rgba(8,12,24,0.45)" }} />
       <div className="absolute top-0 left-0 bottom-0 w-[78%] max-w-[280px] flex flex-col p-5 transition-transform duration-300"
         style={{ background: t.card, transform: open ? "translateX(0)" : "translateX(-100%)" }}>
@@ -748,9 +774,14 @@ function PropertyDetailScreen({ t, p, onBack, onEdit, onDelete, onFav }) {
       <div className="relative h-64" style={{ background: t.bgSoft }}>
         {images[imgIdx] ? <img src={images[imgIdx]} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><IconBuilding size={34} color={t.muted} /></div>}
         <button onClick={onBack} className="absolute top-6 left-5 w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.92)" }}><IconChevronL size={18} color="#101A33" /></button>
-        <button onClick={() => onFav(p.id)} className="absolute top-6 right-5 w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.92)" }}>
-          <IconHeart size={17} color={p.fav ? "#D96C56" : "#101A33"} fill={p.fav ? "#D96C56" : "none"} />
-        </button>
+        <div className="absolute top-6 right-5 flex gap-2">
+          {navigator.share && (
+            <button onClick={() => navigator.share({ title: p.name, text: `${p.name} · ${fmtMoney(p.price)}`, url: p.link || undefined }).catch(() => {})} className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.92)" }}><IconShare size={16} color="#101A33" /></button>
+          )}
+          <button onClick={() => onFav(p.id)} className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.92)" }}>
+            <IconHeart size={17} color={p.fav ? "#D96C56" : "#101A33"} fill={p.fav ? "#D96C56" : "none"} />
+          </button>
+        </div>
         {images.length > 1 && (
           <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
             {images.map((_, i) => <button key={i} onClick={() => setImgIdx(i)} className="rounded-full" style={{ width: i === imgIdx ? 16 : 6, height: 6, background: i === imgIdx ? "#fff" : "rgba(255,255,255,0.5)" }} />)}
@@ -776,10 +807,12 @@ function PropertyDetailScreen({ t, p, onBack, onEdit, onDelete, onFav }) {
           <span className="flex items-center gap-1.5"><IconRuler size={15} color={t.muted} />{p.m2Construccion || p.m2Terreno || 0}m²</span>
         </div>
 
+        <UpdatedBanner t={t} iso={p.updatedAt} />
+
         {p.features && (
           <div className="mt-5">
             <SectionTitle t={t}>Características</SectionTitle>
-            <p className="mcc-sans text-[13.5px] leading-relaxed" style={{ color: t.muted }}>{p.features}</p>
+            <ExpandableText text={p.features} t={t} />
           </div>
         )}
 
@@ -805,7 +838,7 @@ function PropertyDetailScreen({ t, p, onBack, onEdit, onDelete, onFav }) {
         {p.notes && (
           <div className="mt-4">
             <SectionTitle t={t}>📝 Notas</SectionTitle>
-            <p className="mcc-sans text-[13.5px] leading-relaxed" style={{ color: t.muted }}>{p.notes}</p>
+            <ExpandableText text={p.notes} t={t} />
           </div>
         )}
         {p.link && (
@@ -1277,23 +1310,28 @@ function PerfilScreen(props) {
 /*  NAV INFERIOR                                                        */
 /* ================================================================== */
 const TABS = [
-  { id: "home", icon: IconHome },
-  { id: "casas", icon: IconSearch },
-  { id: "cotiza", icon: IconCalc },
-  { id: "comparar", icon: IconChart },
-  { id: "perfil", icon: IconGear },
+  { id: "home", icon: IconHome, label: "Inicio" },
+  { id: "casas", icon: IconBuilding, label: "Casas" },
+  { id: "cotiza", icon: IconCalc, label: "Cotiza" },
+  { id: "comparar", icon: IconChart, label: "Comparar" },
+  { id: "perfil", icon: IconUser, label: "Perfil" },
 ];
 function BottomNav({ t, tab, setTab }) {
   return (
-    <div className="absolute bottom-5 left-0 right-0 flex items-center justify-center gap-3 px-6 z-10">
-      {TABS.map((tb) => {
-        const active = tab === tb.id;
-        return (
-          <button key={tb.id} onClick={() => setTab(tb.id)} className="w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-md" style={{ background: active ? t.accent : t.card, border: `1px solid ${active ? t.accent : t.border}` }}>
-            <tb.icon size={18} color={active ? t.onAccent : t.muted} />
-          </button>
-        );
-      })}
+    <div className="flex-shrink-0 z-10" style={{ background: t.card, borderTop: `1px solid ${t.border}` }}>
+      <div className="flex items-stretch justify-between px-1 pt-2" style={{ paddingBottom: "max(10px, env(safe-area-inset-bottom, 10px))" }}>
+        {TABS.map((tb) => {
+          const active = tab === tb.id;
+          return (
+            <button key={tb.id} onClick={() => setTab(tb.id)} className="flex-1 flex flex-col items-center gap-1 py-1">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors" style={{ background: active ? t.accentSoft : "transparent" }}>
+                <tb.icon size={17} color={active ? t.accent : t.muted} />
+              </div>
+              <span className="mcc-sans text-[10px] font-medium" style={{ color: active ? t.accent : t.muted }}>{tb.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -1318,8 +1356,9 @@ export default function App() {
   const openProperty = (id) => { setSelectedId(id); setTab("detail"); };
   const toggleFav = (id) => setProperties((ps) => ps.map((p) => (p.id === id ? { ...p, fav: !p.fav } : p)));
   const saveProperty = (p) => {
-    if (p.id) setProperties((ps) => ps.map((x) => (x.id === p.id ? p : x)));
-    else setProperties((ps) => [...ps, { ...p, id: Date.now() }]);
+    const stamped = { ...p, updatedAt: new Date().toISOString() };
+    if (stamped.id) setProperties((ps) => ps.map((x) => (x.id === stamped.id ? stamped : x)));
+    else setProperties((ps) => [...ps, { ...stamped, id: Date.now() }]);
     setEditingProperty(null);
     setTab("casas");
   };
@@ -1358,15 +1397,15 @@ export default function App() {
 
   return (
     <div className="w-full flex items-center justify-center" style={{ background: dark ? "#05070E" : "#E7EBF5", minHeight: "100vh" }}>
-      <div className="relative w-full max-w-[430px] min-h-screen sm:min-h-[800px] sm:my-6 sm:rounded-[36px] overflow-hidden sm:shadow-2xl" style={{ background: t.bg }}>
+      <div className="relative w-full max-w-[430px] h-[100dvh] sm:h-[800px] sm:my-6 sm:rounded-[36px] overflow-hidden sm:shadow-2xl flex flex-col" style={{ background: t.bg }}>
         {stage === "name" && <NameScreen t={t} onNext={(n) => { setName(n); setStage("intro"); }} />}
         {stage === "intro" && <IntroScreen t={t} onDone={() => setStage("app")} />}
         {stage === "app" && (
-          <div className="relative">
-            {body}
+          <>
+            <div className="flex-1 overflow-y-auto mcc-scroll">{body}</div>
             {showBottomNav && <BottomNav t={t} tab={tab} setTab={(id) => { setSelectedId(null); setEditingProperty(null); setTab(id); }} />}
             <SideDrawer open={menuOpen} onClose={() => setMenuOpen(false)} t={t} name={name} dark={dark} setDark={setDark} tab={tab} setTab={setTab} />
-          </div>
+          </>
         )}
       </div>
     </div>

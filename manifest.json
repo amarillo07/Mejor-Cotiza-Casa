@@ -2,17 +2,18 @@
   "name": "Mejor Cotiza Casa",
   "short_name": "Cotiza Casa",
   "description": "Guarda, cotiza y compara casas: tu asistente personal de vivienda.",
+  "id": "/mejor-cotiza-casa/",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#F2F5FB",
   "theme_color": "#2F5FFF",
   "orientation": "portrait",
   "icons": [
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%232F5FFF'/%3E%3Cpath d='M96 24L154 74v72a8 8 0 01-8 8H108v-46H84v46H46a8 8 0 01-8-8V74L96 24Z' fill='white'/%3E%3C/svg%3E",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    }
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
