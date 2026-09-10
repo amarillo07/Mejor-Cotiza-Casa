@@ -10,7 +10,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%232F5FFF'/%3E%3Ctext x='96' y='128' font-size='100' text-anchor='middle' fill='white' font-family='Arial'%3E%F0%9F%8F%A1%3C/text%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%232F5FFF'/%3E%3Cpath d='M96 24L154 74v72a8 8 0 01-8 8H108v-46H84v46H46a8 8 0 01-8-8V74L96 24Z' fill='white'/%3E%3C/svg%3E",
       "sizes": "192x192",
       "type": "image/svg+xml"
     }
